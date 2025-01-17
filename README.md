@@ -1,1 +1,1 @@
-# SmartLibrary
+Um sistema completo de gerenciamento de biblioteca que oferece uma solução híbrida para o controle de livros, usuários e empréstimos. Projetado para ser simples, flexível e extensível, tornando-o ideal para pequenos projetos ou fins educacionais.
