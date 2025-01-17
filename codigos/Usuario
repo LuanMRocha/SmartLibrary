@@ -1,0 +1,40 @@
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class Usuario {
+    private String nome;
+    private List<Emprestimo> emprestimos;
+
+    public Usuario(String nome) {
+        this.nome = nome;
+        this.emprestimos = new ArrayList<>();
+    }
+
+    // Método abstrato para obter o limite de empréstimos (Aluno ou Professor)
+    public abstract int getLimiteEmprestimos();
+
+    // Método para adicionar um empréstimo
+    public void adicionarEmprestimo(Emprestimo emprestimo) {
+        emprestimos.add(emprestimo);
+    }
+
+    // Método para obter os empréstimos
+    public List<Emprestimo> getEmprestimos() {
+        return emprestimos;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    // Método toString para exibir as informações do usuário, incluindo empréstimos disponíveis
+    @Override
+    public String toString() {
+        int emprestimosDisponiveis = getLimiteEmprestimos() - emprestimos.size();
+        return "Nome: " + nome + " | Empréstimos disponíveis: " + emprestimosDisponiveis;
+    }
+}
