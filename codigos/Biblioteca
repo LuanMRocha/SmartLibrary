@@ -1,0 +1,283 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class Biblioteca {
+    private List<Livro> livros;
+    private List<Usuario> usuarios;
+    private List<Emprestimo> emprestimos;
+
+    public Biblioteca() {
+        this.livros = new ArrayList<>();
+        this.usuarios = new ArrayList<>();
+        this.emprestimos = new ArrayList<>();
+    }
+
+    // 1. Cadastrar Livro
+    public void cadastrarLivro(Scanner scanner) {
+        System.out.print("Digite o título do livro: ");
+        String titulo = scanner.nextLine();
+
+        System.out.print("Digite o autor do livro: ");
+        String autor = scanner.nextLine();
+
+        Livro livro = new Livro(titulo, autor);
+        livros.add(livro);
+
+        System.out.println("Livro cadastrado com sucesso!");
+    }
+
+    // 2. Listar Livros
+    public void listarLivros() {
+        if (livros.isEmpty()) {
+            System.out.println("Nenhum livro cadastrado.");
+        } else {
+            System.out.println("=== Lista de Livros ===");
+            for (Livro livro : livros) {
+                System.out.println(livro);
+            }
+        }
+    }
+
+    // 3. Cadastrar Usuário
+    public void cadastrarUsuario(Scanner scanner) {
+        System.out.print("Digite o nome do usuário: ");
+        String nome = scanner.nextLine();
+
+        System.out.println("Escolha o tipo de usuário:");
+        System.out.println("1. Aluno");
+        System.out.println("2. Professor");
+        System.out.print("Escolha uma opção: ");
+        int tipoUsuario = scanner.nextInt();
+        scanner.nextLine(); // Consumir a quebra de linha
+
+        Usuario usuario;
+
+        // Criar o usuário com base na escolha
+        if (tipoUsuario == 1) {
+            usuario = new Aluno(nome); // Instancia um Aluno
+        } else if (tipoUsuario == 2) {
+            usuario = new Professor(nome); // Instancia um Professor
+        } else {
+            System.out.println("Opção inválida!");
+            return;
+        }
+
+        usuarios.add(usuario);
+        System.out.println("Usuário cadastrado com sucesso!");
+    }
+
+    // 4. Listar Usuários
+    public void listarUsuarios() {
+        if (usuarios.isEmpty()) {
+            System.out.println("Nenhum usuário cadastrado.");
+        } else {
+            System.out.println("=== Lista de Usuários ===");
+            for (Usuario usuario : usuarios) {
+                System.out.println(usuario + " | Empréstimos disponíveis: " + usuario.getLimiteEmprestimos());
+            }
+        }
+    }
+
+    // 5. Editar Livro
+    public void editarLivro(Scanner scanner) {
+        System.out.print("Digite o título do livro que deseja editar: ");
+        String titulo = scanner.nextLine();
+        Livro livro = buscarLivro(titulo);
+
+        if (livro != null) {
+            System.out.print("Digite o novo título do livro: ");
+            String novoTitulo = scanner.nextLine();
+
+            System.out.print("Digite o novo autor do livro: ");
+            String novoAutor = scanner.nextLine();
+
+            livro.setTitulo(novoTitulo);
+            livro.setAutor(novoAutor);
+
+            System.out.println("Livro editado com sucesso!");
+        } else {
+            System.out.println("Livro não encontrado.");
+        }
+    }
+
+    // 6. Remover Livro
+    public void removerLivro(Scanner scanner) {
+        System.out.print("Digite o título do livro que deseja remover: ");
+        String titulo = scanner.nextLine();
+        Livro livro = buscarLivro(titulo);
+
+        if (livro != null) {
+            livros.remove(livro);
+            System.out.println("Livro removido com sucesso!");
+        } else {
+            System.out.println("Livro não encontrado.");
+        }
+    }
+
+    // 7. Realizar Empréstimo
+    public void realizarEmprestimo(Scanner scanner) {
+        System.out.print("Digite o nome do usuário: ");
+        String nomeUsuario = scanner.nextLine();
+        Usuario usuario = buscarUsuario(nomeUsuario);
+
+        if (usuario == null) {
+            System.out.println("Usuário não encontrado.");
+            return;
+        }
+
+        if (usuario.getEmprestimos().size() >= usuario.getLimiteEmprestimos()) {
+            System.out.println("Limite de empréstimos atingido!");
+            return;
+        }
+
+        System.out.print("Digite o título do livro: ");
+        String tituloLivro = scanner.nextLine();
+        Livro livro = buscarLivro(tituloLivro);
+
+        if (livro == null) {
+            System.out.println("Livro não encontrado.");
+            return;
+        }
+
+        if (!livro.isDisponivel()) {
+            System.out.println("Livro já está emprestado.");
+            return;
+        }
+
+        Emprestimo emprestimo = new Emprestimo(usuario, livro);
+        emprestimos.add(emprestimo);
+        usuario.adicionarEmprestimo(emprestimo);
+        livro.setDisponivel(false);
+
+        System.out.println("Empréstimo realizado com sucesso!");
+    }
+
+    // 8. Listar Empréstimos
+    public void listarEmprestimos() {
+        if (emprestimos.isEmpty()) {
+            System.out.println("Nenhum empréstimo realizado.");
+        } else {
+            System.out.println("=== Lista de Empréstimos ===");
+            for (Emprestimo emprestimo : emprestimos) {
+                System.out.println(emprestimo);
+            }
+        }
+    }
+
+    // 9. Editar Empréstimo
+    public void editarEmprestimo(Scanner scanner) {
+        System.out.print("Digite o nome do usuário que realizou o empréstimo: ");
+        String nomeUsuario = scanner.nextLine();
+        Usuario usuario = buscarUsuario(nomeUsuario);
+
+        if (usuario == null) {
+            System.out.println("Usuário não encontrado.");
+            return;
+        }
+
+        System.out.print("Digite o título do livro emprestado: ");
+        String tituloLivro = scanner.nextLine();
+        Emprestimo emprestimo = buscarEmprestimo(usuario, tituloLivro);
+
+        if (emprestimo != null) {
+            System.out.print("Digite o novo título do livro: ");
+            String novoTitulo = scanner.nextLine();
+            Livro novoLivro = buscarLivro(novoTitulo);
+
+            if (novoLivro != null) {
+                emprestimo.devolverLivro(); // Devolver o livro atual
+                emprestimo = new Emprestimo(usuario, novoLivro); // Criar novo empréstimo com o livro atualizado
+                emprestimos.add(emprestimo);
+                System.out.println("Empréstimo atualizado com sucesso!");
+            } else {
+                System.out.println("Novo livro não encontrado.");
+            }
+        } else {
+            System.out.println("Empréstimo não encontrado.");
+        }
+    }
+
+    // 10. Remover Empréstimo
+    public void removerEmprestimo(Scanner scanner) {
+        System.out.print("Digite o nome do usuário: ");
+        String nomeUsuario = scanner.nextLine();
+        Usuario usuario = buscarUsuario(nomeUsuario);
+
+        if (usuario == null) {
+            System.out.println("Usuário não encontrado.");
+            return;
+        }
+
+        System.out.print("Digite o título do livro emprestado: ");
+        String tituloLivro = scanner.nextLine();
+        Emprestimo emprestimo = buscarEmprestimo(usuario, tituloLivro);
+
+        if (emprestimo != null) {
+            emprestimos.remove(emprestimo);
+            emprestimo.getLivro().setDisponivel(true); // O livro volta a ser disponível
+            System.out.println("Empréstimo removido com sucesso!");
+        } else {
+            System.out.println("Empréstimo não encontrado.");
+        }
+    }
+
+    // 11. Editar Usuário
+    public void editarUsuario(Scanner scanner) {
+        System.out.print("Digite o nome do usuário que deseja editar: ");
+        String nome = scanner.nextLine();
+        Usuario usuario = buscarUsuario(nome);
+
+        if (usuario != null) {
+            System.out.print("Digite o novo nome do usuário: ");
+            String novoNome = scanner.nextLine();
+            usuario.setNome(novoNome);
+
+            System.out.println("Usuário editado com sucesso!");
+        } else {
+            System.out.println("Usuário não encontrado.");
+        }
+    }
+
+    // 12. Remover Usuário
+    public void removerUsuario(Scanner scanner) {
+        System.out.print("Digite o nome do usuário que deseja remover: ");
+        String nome = scanner.nextLine();
+        Usuario usuario = buscarUsuario(nome);
+
+        if (usuario != null) {
+            usuarios.remove(usuario);
+            System.out.println("Usuário removido com sucesso!");
+        } else {
+            System.out.println("Usuário não encontrado.");
+        }
+    }
+
+    // Métodos auxiliares
+    private Livro buscarLivro(String titulo) {
+        for (Livro livro : livros) {
+            if (livro.getTitulo().equalsIgnoreCase(titulo)) {
+                return livro;
+            }
+        }
+        return null;
+    }
+
+    private Usuario buscarUsuario(String nome) {
+        for (Usuario usuario : usuarios) {
+            if (usuario.getNome().equalsIgnoreCase(nome)) {
+                return usuario;
+            }
+        }
+        return null;
+    }
+
+    private Emprestimo buscarEmprestimo(Usuario usuario, String tituloLivro) {
+        for (Emprestimo emprestimo : emprestimos) {
+            if (emprestimo.getUsuario().equals(usuario) && emprestimo.getLivro().getTitulo().equalsIgnoreCase(tituloLivro)) {
+                return emprestimo;
+            }
+        }
+        return null;
+    }
+}
