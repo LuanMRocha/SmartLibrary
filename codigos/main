@@ -1,0 +1,65 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Biblioteca biblioteca = new Biblioteca(); // Gerenciador de dados
+        int opcao;
+
+        do {
+            exibirMenu();
+            System.out.print("Escolha uma opção: ");
+            opcao = scanner.nextInt();
+            scanner.nextLine(); // Consumir quebra de linha
+
+            if (opcao == 1) {
+                biblioteca.cadastrarLivro(scanner);
+            } else if (opcao == 2) {
+                biblioteca.listarLivros();
+            } else if (opcao == 3) {
+                biblioteca.cadastrarUsuario(scanner);
+            } else if (opcao == 4) {
+                biblioteca.listarUsuarios();
+            } else if (opcao == 5) {
+                biblioteca.editarLivro(scanner);
+            } else if (opcao == 6) {
+                biblioteca.removerLivro(scanner);
+            } else if (opcao == 7) {
+                biblioteca.realizarEmprestimo(scanner);
+            } else if (opcao == 8) {
+                biblioteca.listarEmprestimos();
+            } else if (opcao == 9) {
+                biblioteca.editarUsuario(scanner);
+            } else if (opcao == 10) {
+                biblioteca.removerUsuario(scanner);
+            } else if (opcao == 11) {
+                biblioteca.editarEmprestimo(scanner);
+            } else if (opcao == 12) {
+                biblioteca.removerEmprestimo(scanner);
+            } else if (opcao == 13) {
+                System.out.println("Saindo do sistema...");
+            } else {
+                System.out.println("Opção inválida!");
+            }
+        } while (opcao != 13);
+
+        scanner.close();
+    }
+
+    private static void exibirMenu() {
+        System.out.println("\n*** Sistema de Biblioteca ***");
+        System.out.println("1. Cadastrar Livro");
+        System.out.println("2. Listar Livros");
+        System.out.println("3. Cadastrar Usuário");
+        System.out.println("4. Listar Usuários");
+        System.out.println("5. Editar Livro");
+        System.out.println("6. Remover Livro");
+        System.out.println("7. Realizar Empréstimo");
+        System.out.println("8. Listar Empréstimos");
+        System.out.println("9. Editar Usuário");
+        System.out.println("10. Remover Usuário");
+        System.out.println("11. Editar Empréstimo");
+        System.out.println("12. Remover Empréstimo");
+        System.out.println("13. Sair");
+    }
+}
